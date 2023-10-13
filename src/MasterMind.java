@@ -14,9 +14,8 @@ public class MasterMind{
 
     public static int numInRightPos(int randomNum, int userNum){
         int counterRightPos = 0;
-        int divider = 10;
         for(int i = 1; i <= 4; i++) {
-            if (randomNum % divider == userNum % divider) {
+            if (randomNum % 10 == userNum % 10) {
                 counterRightPos++;
             }
             randomNum /= 10;
@@ -25,15 +24,28 @@ public class MasterMind{
         return counterRightPos;
     }
 
-    public static int numInWrongPos(int randomNum, int userNum){
-        int counterRightPos = 0;
-        int divider = 10;
-        for(int i = 1; i <= 4; i++) {
-            for(int j = 1; j <= 4; j++) {
-
+    public static boolean verifyNum(int numUserToTry, int randomNum){
+        for(int j = 1; j <= 4; j++) {
+            if (numUserToTry == randomNum % 10) {
+                return true;
             }
+            randomNum /= 10;
         }
-        return counterRightPos;
+        return false;
+    }
+
+
+    public static int numInWrongPos(int randomNum, int userNum){
+        int counterWrongPos = 0;
+        int numUserToTry;
+        for(int i = 1; i <= 4; i++) {
+            numUserToTry = userNum % 10;
+            if (verifyNum(numUserToTry, randomNum)) {
+                counterWrongPos++;
+            }
+            userNum /= 10;
+        }
+        return counterWrongPos;
     }
 
 
