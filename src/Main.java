@@ -1,6 +1,7 @@
 
-public class Main extends MasterMind{
+class Main{
     public static void main(String[] args) {
-        game();
+        MasterMind mm = new MasterMind(4,13);
+        mm.game();
     }
 }

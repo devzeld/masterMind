@@ -2,69 +2,79 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class MasterMind{
-    public static int getRandomNum(){
+    private final boolean[] correctNumbers;
+    private final int digits;
+    private final int tries;
+    private final int randNum;
+
+    public MasterMind(int digits,int tries){
         Random ran = new Random();
-        return 1000 + ran.nextInt(9000);
+        this.digits = digits;
+        this.tries = tries;
+        this.randNum = 1000 + ran.nextInt(9000);
+        correctNumbers = new boolean[digits];
     }
 
-    public static int getUserNum(int i){
+
+    public int getDigits(int num, int index){
+        return (num / (int) Math.pow(10, index)) % 10;
+    }
+
+    public int getUserNum(int i){
         Scanner sc = new Scanner(System.in);
         System.out.print(i + "- Insert a digit: ");
         return sc.nextInt();
     }
 
-    public static int numInRightPos(int randomNum, int userNum){
+    public int numInRightPos(int userNum){
         int counterRightPos = 0;
-        for(int i = 1; i <= 4; i++) {
-            if (randomNum % 10 == userNum % 10) {
+        for(int i = 0; i < this.digits; i++) {
+            if (getDigits(userNum, i) == getDigits(this.randNum, i)) {
+                this.correctNumbers[i] = true;
                 counterRightPos++;
+            }else {
+                this.correctNumbers[i] = false;
             }
-            randomNum /= 10;
-            userNum /= 10;
         }
         return counterRightPos;
     }
 
-    public static boolean verifyNum(int numUserToTry, int randomNum){
-        for(int j = 1; j <= 4; j++) {
-            if (numUserToTry == randomNum % 10) {
-                return true;
-            }
-            randomNum /= 10;
-        }
-        return false;
-    }
 
 
-    public static int numInWrongPos(int randomNum, int userNum){
+    public int numInWrongPos(int userNum){
         int counterWrongPos = 0;
-        int numUserToTry;
-        int randN = randomNum;
-        int userN = userNum;
-        for(int i = 1; i <= 4; i++) {
-            numUserToTry = userNum % 10;
-            if (verifyNum(numUserToTry, randomNum)) {
-                counterWrongPos++;
+        for(int i = 0; i < this.digits; i++) {
+            if(this.correctNumbers[i]){
+                continue;
             }
-            userNum /= 10;
+            for(int j = 0; j <= this.digits; j++){
+                if (getDigits(userNum, j) == getDigits(this.randNum, i)) {
+                    counterWrongPos++;
+                    break;
+                }
+            }
         }
-        return counterWrongPos - numInRightPos(randN, userN);
+        return counterWrongPos;
     }
 
-    public static void game(){
+
+    public void game(){
         int i = 1;
-        int randomNum = getRandomNum();
-        while (i <= 10){
+        System.out.println(this.randNum);
+        while (i <= this.tries){
             int userNum = getUserNum(i);
-            System.out.println(numInRightPos(randomNum, userNum) == 4?"You Won!" : "The number that you guess the position are: " + numInRightPos(randomNum, userNum) + "\nThe number that you guess are: " + numInWrongPos(randomNum, userNum));
-            if (numInRightPos(randomNum, userNum) == 4) {
-                break;
-            } else {
-                i++;
+            if (userNum >= 1000 && userNum <= 9999) {
+                System.out.println(numInRightPos(userNum) == 4 ? "You Won!" : "Right Position: " + numInRightPos(userNum) + "\nWrong Position: " + numInWrongPos(userNum));
+                if (numInRightPos(userNum) == 4) {
+                    break;
+                } else {
+                    i++;
+                }
             }
-
         }
-        System.out.println(i > 10?"You probably lose!\nThe number was " + randomNum:"Good, the number was " + randomNum);
+        System.out.println(i > 10?"You probably lose!\nThe number was " + this.randNum:"Good, the number was " + this.randNum);
     }
 
-    }
+}
+
+
